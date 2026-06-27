@@ -5,7 +5,7 @@ const morgan = require("morgan");
 const AppError = require("./src/utils/appError");
 const globalErrorHandler = require("./src/controllers/errorController");
 const authRoutes = require("./src/routes/authRoutes");
-
+const resumeRouter = require("./src/routes/resumeRoutes");
 process.on("uncaughtException", (err) => {
   console.log("UNCAUGHT EXCEPTION! 💥 Shutting down...");
   console.log(err.name, err.message);
@@ -33,6 +33,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/users", authRoutes);
+app.use("/api/v1/resumes", resumeRouter);
 
 app.use((req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

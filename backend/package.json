@@ -7,7 +7,9 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.7.2",
     "morgan": "^1.11.0",
+    "multer": "^2.2.0",
     "nodemailer": "^9.0.1",
+    "pdf-parse": "^1.1.1",
     "validator": "^13.15.35"
   },
   "devDependencies": {
