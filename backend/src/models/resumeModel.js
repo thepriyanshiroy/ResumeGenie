@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const ResumeAnalysis = require('./resumeAnalysisModel');
 const resumeSchema = new mongoose.Schema(
   {
     // Owner of the resume
@@ -85,6 +85,29 @@ const resumeSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+const fs = require('fs').promises;
+
+resumeSchema.pre('findOneAndDelete', async function () {
+    // Find the resume that is about to be deleted
+    const resume = await this.model.findOne(this.getFilter());
+
+    if (resume) {
+        // 1. Delete the analysis
+        await ResumeAnalysis.findOneAndDelete({
+            resume: resume._id
+        });
+        
+        // 2. Delete the physical file
+        if (resume.filePath) {
+            try {
+                await fs.unlink(resume.filePath);
+            } catch (err) {
+                console.error("Error deleting file in pre-hook:", err);
+            }
+        }
+    }
+});
 
 const Resume = mongoose.model("Resume", resumeSchema);
 

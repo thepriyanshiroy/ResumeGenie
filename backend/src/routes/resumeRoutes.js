@@ -21,5 +21,8 @@ router
   .route("/:id")
   .get(resumeController.getResume)
   .delete(resumeController.deleteResume);
-
+router
+  .route("/:id/analyze")
+  .post(resumeController.analyzeResume)
+  .get(resumeController.getResumeAnalysis);
 module.exports = router;

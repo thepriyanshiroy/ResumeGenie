@@ -1,5 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
+dotenv.config({ path: "./config.env" });
 const cors = require("cors");
 const morgan = require("morgan");
 const AppError = require("./src/utils/appError");
@@ -11,8 +12,6 @@ process.on("uncaughtException", (err) => {
   console.log(err.name, err.message);
   process.exit(1);
 });
-
-dotenv.config({ path: "./config.env" });
 
 const connectDB = require("./src/config/db");
 
