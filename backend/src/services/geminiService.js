@@ -1,4 +1,6 @@
 const { GoogleGenAI, Type } = require("@google/genai");
+const AppError = require('../utils/appError');
+const { generateResumePrompt } = require('../utils/resumePrompt');
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
@@ -10,23 +12,7 @@ exports.analyzeResume = async (
   jobTitle,
   jobDescription
 ) => {
-  const prompt = `
-You are an expert ATS Resume Analyzer.
-Analyze the provided resume against the job description.
-Provide detailed feedback, score breakdown, and actionable suggestions.
-
-Company:
-${companyName}
-
-Job Title:
-${jobTitle}
-
-Job Description:
-${jobDescription}
-
-Resume:
-${resumeText}
-`;
+  const prompt = generateResumePrompt(resumeText, companyName, jobTitle, jobDescription);
 
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
@@ -180,5 +166,12 @@ ${resumeText}
     }
   });
 
-  return response.text;
+  const analysisText = response.text;
+  const cleanJson = analysisText.replace(/```json/gi, '').replace(/```/gi, '').trim();
+  
+  try {
+    return JSON.parse(cleanJson);
+  } catch (error) {
+    throw new AppError("Failed to parse AI response as JSON", 500);
+  }
 };

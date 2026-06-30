@@ -5,6 +5,7 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const parsePDF = require('../utils/pdfParser');
 const geminiService = require("../services/geminiService");
+const logger = require("../utils/logger");
 exports.uploadResume = catchAsync(async (req, res, next) => {
     const resume = await Resume.create({
         user: req.user.id,
@@ -31,10 +32,20 @@ exports.uploadResume = catchAsync(async (req, res, next) => {
 
 });
 exports.getAllResumes = catchAsync(async (req, res, next) => {
+    // Pagination
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const skip = (page - 1) * limit;
+
+    // Sorting
+    const sort = req.query.sort ? req.query.sort.split(',').join(' ') : '-createdAt';
 
     const resumes = await Resume.find({
         user: req.user.id
-    });
+    })
+    .sort(sort)
+    .skip(skip)
+    .limit(limit);
 
     res.status(200).json({
         status: 'success',
@@ -77,6 +88,19 @@ exports.deleteResume = catchAsync(async (req, res, next) => {
         return next(new AppError('No resume found with that ID.', 404));
     }
 
+    // Delete the physical file to prevent storage bloat
+    if (resume.filePath) {
+        try {
+            await fs.unlink(resume.filePath);
+            logger.info(`Deleted physical file: ${resume.filePath}`);
+        } catch (err) {
+            logger.error(`Error deleting physical file ${resume.filePath}: ${err.message}`);
+        }
+    }
+
+    // Delete associated analysis if it exists
+    await ResumeAnalysis.deleteMany({ resume: resume._id });
+
     res.status(204).json({
         status: 'success',
         data: null
@@ -91,21 +115,12 @@ exports.analyzeResume = catchAsync(async (req, res, next) => {
         return next(new AppError("Resume not found", 404));
     }
 
-    const analysisText = await geminiService.analyzeResume(
+    const analysisData = await geminiService.analyzeResume(
         resume.extractedText,
         resume.companyName,
         resume.jobTitle,
         resume.jobDescription
     );
-    
-    // Clean markdown formatting if AI returns it and parse JSON
-    const cleanJson = analysisText.replace(/```json/gi, '').replace(/```/gi, '').trim();
-    let analysisData;
-    try {
-        analysisData = JSON.parse(cleanJson);
-    } catch (error) {
-        return next(new AppError("Failed to parse AI response as JSON", 500));
-    }
 
     const savedAnalysis = await ResumeAnalysis.create({
         resume: resume._id,
