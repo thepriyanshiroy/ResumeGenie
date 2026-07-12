@@ -2,6 +2,8 @@
 import { Button } from "@/components/ui/Button";
 import { Sparkles } from "lucide-react";
 
+import Link from "next/link";
+
 export default function Hero() {
   return (
     <section className="relative w-full pt-16 pb-16 md:pt-20 md:pb-24 flex flex-col items-center text-center px-4">
@@ -22,9 +24,11 @@ export default function Hero() {
 
       {/* CTAs */}
       <div className="flex flex-col sm:flex-row items-center gap-4">
-        <Button variant="premium" size="lg">
-          Start!
-        </Button>
+        <Link href="/login">
+          <Button variant="premium" size="lg">
+            Start!
+          </Button>
+        </Link>
       </div>
     </section>
   );

@@ -32,7 +32,7 @@ export default function DashboardNavbar() {
           R
         </div>
         <h1 className="text-xl font-bold tracking-tight text-foreground font-display">
-          ResumeAI
+          ResumeGenie
         </h1>
       </Link>
 

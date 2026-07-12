@@ -30,7 +30,7 @@ export default function AuthLayout({ children }) {
               R
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground font-display">
-              ResumeAI
+              ResumeGenie
             </h1>
           </Link>
         </div>

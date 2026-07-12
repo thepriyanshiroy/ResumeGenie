@@ -21,7 +21,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: "ResumeAI — AI Resume Analyzer & ATS Score Checker",
+  title: "ResumeGenie — AI Resume Analyzer & ATS Score Checker",
   description: "Analyze your resume against any job description. Get an instant ATS score, keyword gaps, and AI-powered rewrite suggestions.",
 };
 

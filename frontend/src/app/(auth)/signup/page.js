@@ -45,7 +45,7 @@ export default function Signup() {
   return (
     <div>
       <h2 className="text-3xl font-display font-bold text-center text-foreground mb-2">Create an Account</h2>
-      <p className="text-center text-[#64748B] mb-8">Join ResumeAI and land more offers</p>
+      <p className="text-center text-[#64748B] mb-8">Join ResumeGenie and land more offers</p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-2">

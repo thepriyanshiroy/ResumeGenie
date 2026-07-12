@@ -11,7 +11,7 @@ export default function Navbar() {
           R
         </div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground font-display">
-          ResumeAI
+          ResumeGenie
         </h1>
       </div>
 
