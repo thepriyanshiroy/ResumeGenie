@@ -15,10 +15,9 @@ const createSendToken = (user, statusCode, req, res) => {
     const cookieOptions = {
         expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
         httpOnly: true,
-        secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
-        sameSite: 'strict'
+        secure: process.env.NODE_ENV === 'production' || req.secure || req.headers['x-forwarded-proto'] === 'https',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
     };
-    if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
     
     res.cookie('jwt', token, cookieOptions);
     user.password = undefined;
@@ -59,8 +58,8 @@ exports.logout = (req, res) => {
     res.cookie('jwt', 'loggedout', {
         expires: new Date(Date.now() + 10 * 1000), // expires in 10 seconds
         httpOnly: true,
-        secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
-        sameSite: 'strict'
+        secure: process.env.NODE_ENV === 'production' || req.secure || req.headers['x-forwarded-proto'] === 'https',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
     });
     
     // Prevent browser from caching this response
