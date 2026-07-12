@@ -27,6 +27,7 @@ export default function Login() {
     setIsLoading(true);
     try {
       const response = await api.post("/users/login", data);
+      localStorage.setItem("token", response.data.token);
       toast.success("Welcome back!");
       router.push("/dashboard");
     } catch (error) {
@@ -77,7 +78,7 @@ export default function Login() {
       </form>
 
       <div className="mt-8 text-center text-sm text-[#64748B]">
-        Don't have an account?{" "}
+        Don&apos;t have an account?{" "}
         <Link href="/signup" className="text-primary font-medium hover:underline">
           Sign up
         </Link>

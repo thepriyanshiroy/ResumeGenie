@@ -43,6 +43,7 @@ exports.getAllResumes = catchAsync(async (req, res, next) => {
     const resumes = await Resume.find({
         user: req.user.id
     })
+    .populate('analysis')
     .sort(sort)
     .skip(skip)
     .limit(limit);
@@ -91,10 +92,16 @@ exports.deleteResume = catchAsync(async (req, res, next) => {
     // Delete the physical file to prevent storage bloat
     if (resume.filePath) {
         try {
-            await fs.unlink(resume.filePath);
-            logger.info(`Deleted physical file: ${resume.filePath}`);
+            if (resume.filePath.startsWith('http')) {
+                const cloudinary = require('cloudinary').v2;
+                await cloudinary.uploader.destroy(resume.storedFileName);
+                logger.info(`Deleted Cloudinary file: ${resume.storedFileName}`);
+            } else {
+                await fs.unlink(resume.filePath);
+                logger.info(`Deleted physical file: ${resume.filePath}`);
+            }
         } catch (err) {
-            logger.error(`Error deleting physical file ${resume.filePath}: ${err.message}`);
+            logger.error(`Error deleting file ${resume.filePath}: ${err.message}`);
         }
     }
 
@@ -115,43 +122,70 @@ exports.analyzeResume = catchAsync(async (req, res, next) => {
         return next(new AppError("Resume not found", 404));
     }
 
-    const analysisData = await geminiService.analyzeResume(
-        resume.extractedText,
-        resume.companyName,
-        resume.jobTitle,
-        resume.jobDescription
-    );
-
-    const savedAnalysis = await ResumeAnalysis.create({
-        resume: resume._id,
-        user: req.user._id,
-        ...analysisData,
-        analysisStatus: "completed"
-    });
-
-    resume.analysis = savedAnalysis._id;
-    await resume.save();
-    
-    res.status(201).json({
-        status: "success",
-        data: {
-            analysis: savedAnalysis
+    // Check if analysis already exists to prevent re-running
+    if (resume.analysis) {
+        const existingAnalysis = await ResumeAnalysis.findById(resume.analysis);
+        if (existingAnalysis) {
+            return res.status(200).json({
+                status: "success",
+                data: {
+                    analysis: existingAnalysis
+                }
+            });
         }
-    });
+    }
+
+    try {
+        const analysisData = await geminiService.analyzeResume(
+            resume.extractedText || "No text extracted.",
+            resume.companyName,
+            resume.jobTitle,
+            resume.jobDescription
+        );
+
+        const savedAnalysis = await ResumeAnalysis.create({
+            resume: resume._id,
+            user: req.user._id,
+            ...analysisData,
+            analysisStatus: "completed"
+        });
+
+        resume.analysis = savedAnalysis._id;
+        resume.status = 'completed';
+        await resume.save();
+        
+        res.status(201).json({
+            status: "success",
+            data: {
+                analysis: savedAnalysis
+            }
+        });
+    } catch (error) {
+        console.error("Analysis Error:", error);
+        
+        let statusCode = 500;
+        let message = "Failed to analyze resume. Please try again.";
+        
+        if (error.message && (error.message.includes("quota") || error.message.includes("429"))) {
+            statusCode = 429;
+            message = "AI Provider Quota Exceeded. Please wait or check your API plan.";
+        }
+
+        return next(new AppError(message, statusCode));
+    }
 });
 exports.getResumeAnalysis = catchAsync(async (req, res, next) => {
-    // ResumeAnalysis has a 'resume' reference, so we query it directly
-    const analysis = await ResumeAnalysis.findOne({ 
-        resume: req.params.id, 
+    const resume = await Resume.findOne({ 
+        _id: req.params.id, 
         user: req.user.id 
-    });
+    }).populate('analysis');
 
-    if (!analysis) {
+    if (!resume || !resume.analysis) {
         return next(new AppError('Analysis not found for this resume', 404));
     }
 
     res.status(200).json({
         status: 'success',
-        data: analysis
+        data: resume.analysis
     });
 });

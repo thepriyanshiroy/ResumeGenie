@@ -12,7 +12,6 @@ export default function Home() {
           <path d="M-100,280 C400,450 1000,450 1540,280" stroke="#DDE4ED" strokeWidth="1" fill="none" />
         </svg>
       </div>
-
       <Navbar />
       <div className="flex-1 z-10 pt-10">
         <Hero />

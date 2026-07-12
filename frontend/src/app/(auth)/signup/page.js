@@ -32,6 +32,7 @@ export default function Signup() {
     setIsLoading(true);
     try {
       const response = await api.post("/users/signup", data);
+      localStorage.setItem("token", response.data.token);
       toast.success("Account created successfully!");
       router.push("/dashboard");
     } catch (error) {

@@ -21,11 +21,22 @@ exports.analyzeResume = async (
       responseMimeType: "application/json",
       responseSchema: {
         type: Type.OBJECT,
+        required: [
+          "resumeSections",
+          "overallAnalysis",
+          "scoreBreakdown",
+          "keywordAnalysis",
+          "strengths",
+          "improvements",
+          "aiSuggestions",
+          "estimatedImprovement"
+        ],
         properties: {
           resumeSections: {
             type: Type.ARRAY,
             items: {
               type: Type.OBJECT,
+              required: ["section", "status", "feedback"],
               properties: {
                 section: {
                   type: Type.STRING,
@@ -49,6 +60,7 @@ exports.analyzeResume = async (
           },
           overallAnalysis: {
             type: Type.OBJECT,
+            required: ["score", "rating", "description", "applicantRank", "quickFixes"],
             properties: {
               score: { type: Type.INTEGER },
               rating: { type: Type.STRING },
@@ -61,6 +73,7 @@ exports.analyzeResume = async (
             type: Type.ARRAY,
             items: {
               type: Type.OBJECT,
+              required: ["category", "score", "feedback"],
               properties: {
                 category: {
                   type: Type.STRING,
@@ -82,11 +95,13 @@ exports.analyzeResume = async (
           },
           keywordAnalysis: {
             type: Type.OBJECT,
+            required: ["found", "missing", "coverage"],
             properties: {
               found: {
                 type: Type.ARRAY,
                 items: {
                   type: Type.OBJECT,
+                  required: ["keyword", "priority"],
                   properties: {
                     keyword: { type: Type.STRING },
                     priority: {
@@ -100,6 +115,7 @@ exports.analyzeResume = async (
                 type: Type.ARRAY,
                 items: {
                   type: Type.OBJECT,
+                  required: ["keyword", "priority"],
                   properties: {
                     keyword: { type: Type.STRING },
                     priority: {
@@ -116,6 +132,7 @@ exports.analyzeResume = async (
             type: Type.ARRAY,
             items: {
               type: Type.OBJECT,
+              required: ["category", "description"],
               properties: {
                 category: { type: Type.STRING },
                 description: { type: Type.STRING }
@@ -126,6 +143,7 @@ exports.analyzeResume = async (
             type: Type.ARRAY,
             items: {
               type: Type.OBJECT,
+              required: ["priority", "category", "description"],
               properties: {
                 priority: {
                   type: Type.STRING,
@@ -140,6 +158,7 @@ exports.analyzeResume = async (
             type: Type.ARRAY,
             items: {
               type: Type.OBJECT,
+              required: ["type", "title", "description"],
               properties: {
                 type: { type: Type.STRING, enum: ["summary", "keywords", "bullet"] },
                 title: { type: Type.STRING },
@@ -155,6 +174,7 @@ exports.analyzeResume = async (
           },
           estimatedImprovement: {
             type: Type.OBJECT,
+            required: ["current", "projected", "increase"],
             properties: {
               current: { type: Type.INTEGER },
               projected: { type: Type.INTEGER },

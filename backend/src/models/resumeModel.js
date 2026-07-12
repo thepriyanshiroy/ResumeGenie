@@ -67,6 +67,12 @@ const resumeSchema = new mongoose.Schema(
       default: "",
     },
 
+    // Reference to the analysis
+    analysis: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ResumeAnalysis"
+    },
+
     // Resume Processing Status
     status: {
       type: String,
@@ -101,7 +107,12 @@ resumeSchema.pre('findOneAndDelete', async function () {
         // 2. Delete the physical file
         if (resume.filePath) {
             try {
-                await fs.unlink(resume.filePath);
+                if (resume.filePath.startsWith('http')) {
+                    const cloudinary = require('cloudinary').v2;
+                    await cloudinary.uploader.destroy(resume.storedFileName);
+                } else {
+                    await fs.unlink(resume.filePath);
+                }
             } catch (err) {
                 console.error("Error deleting file in pre-hook:", err);
             }

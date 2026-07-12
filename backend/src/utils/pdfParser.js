@@ -3,9 +3,17 @@ const pdfParse = require('pdf-parse');
 
 const AppError = require('./appError');
 
+const axios = require('axios');
+
 const parsePDF = async (filePath) => {
     try {
-        const dataBuffer = fs.readFileSync(filePath);
+        let dataBuffer;
+        if (filePath.startsWith('http')) {
+            const response = await axios.get(filePath, { responseType: 'arraybuffer' });
+            dataBuffer = Buffer.from(response.data);
+        } else {
+            dataBuffer = fs.readFileSync(filePath);
+        }
 
         const data = await pdfParse(dataBuffer);
 

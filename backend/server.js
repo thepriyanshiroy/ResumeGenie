@@ -66,6 +66,9 @@ app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 // Compress text responses
 app.use(compression());
 
+// Serve uploads folder statically
+app.use("/uploads", express.static("uploads"));
+
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
