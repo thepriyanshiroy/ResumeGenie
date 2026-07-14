@@ -2,7 +2,10 @@ const nodemailer = require('nodemailer');
 const sendEmail = async options =>{
     //1) create a transporter
     const transporter = nodemailer.createTransport({
-        service: 'gmail', // This automatically sets the correct host, port, and secure settings for Gmail
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        family: 4, // Force IPv4
         auth: {
             user: process.env.EMAIL_USERNAME,
             pass: process.env.EMAIL_PASSWORD
