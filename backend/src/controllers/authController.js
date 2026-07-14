@@ -94,6 +94,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
         })
     }
     catch (err) {
+        console.error('Nodemailer Error in forgotPassword:', err);
         user.passwordResetToken = undefined;
         user.passwordResetExpires = undefined;
         await user.save({ validateBeforeSave: false });

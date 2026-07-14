@@ -33,10 +33,12 @@ export default function ResetPassword({ params }) {
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
-      await api.patch(`/users/resetPassword/${token}`, {
+      const response = await api.patch(`/users/resetPassword/${token}`, {
         password: data.password,
         passwordConfirm: data.passwordConfirm
       });
+      
+      localStorage.setItem("token", response.data.token);
       
       toast.success("Password reset successfully!");
       setIsSuccess(true);
