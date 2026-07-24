@@ -1,4 +1,6 @@
 const express = require("express");
+const dns = require('node:dns');
+dns.setDefaultResultOrder('ipv4first');
 const dotenv = require("dotenv");
 dotenv.config({ path: "./config.env" });
 const cors = require("cors");
