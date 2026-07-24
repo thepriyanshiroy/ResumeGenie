@@ -14,8 +14,14 @@ exports.analyzeResume = async (
 ) => {
   const prompt = generateResumePrompt(resumeText, companyName, jobTitle, jobDescription);
 
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
+  let response;
+  let retries = 4;
+  let delay = 2000;
+  
+  while (retries > 0) {
+    try {
+      response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
     contents: prompt,
     config: {
       responseMimeType: "application/json",
@@ -185,6 +191,15 @@ exports.analyzeResume = async (
       }
     }
   });
+      break;
+    } catch (error) {
+      retries--;
+      if (retries === 0 || error.status !== 503) throw error;
+      console.warn(`Gemini API 503 error. Retrying in ${delay}ms...`);
+      await new Promise(res => setTimeout(res, delay));
+      delay *= 2;
+    }
+  }
 
   const analysisText = response.text;
   const cleanJson = analysisText.replace(/```json/gi, '').replace(/```/gi, '').trim();
