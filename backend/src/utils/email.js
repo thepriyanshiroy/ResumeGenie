@@ -1,16 +1,21 @@
 const nodemailer = require('nodemailer');
+
+// 1) create a transporter
+const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: Number(process.env.EMAIL_PORT),
+    secure: process.env.EMAIL_PORT === '465',
+    auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD
+    }
+});
+
+transporter.verify()
+    .then(() => console.log("SMTP Connected Successfully"))
+    .catch((error) => console.error(error));
+
 const sendEmail = async options =>{
-    //1) create a transporter
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false, // true for 465, false for other ports
-        requireTLS: true,
-        auth: {
-            user: process.env.EMAIL_USERNAME,
-            pass: process.env.EMAIL_PASSWORD
-        }
-    });
     //2) Define the email options
     const mailOptions = {
         from: 'Priyanshi Roy <thepriyanshiroy@gmail.com>',

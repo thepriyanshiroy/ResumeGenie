@@ -57,14 +57,24 @@ app.use("/api", limiter);
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 
+// Express 5 compatibility fix for security middlewares mutating req.query
+app.use((req, res, next) => {
+  Object.defineProperty(req, 'query', {
+    value: { ...req.query },
+    writable: true,
+    configurable: true
+  });
+  next();
+});
+
 // Data sanitization against NoSQL query injection
-// app.use(mongoSanitize());
+app.use(mongoSanitize());
 
 // Data sanitization against XSS
-// app.use(xss());
+app.use(xss());
 
 // Prevent parameter pollution
-// app.use(hpp());
+app.use(hpp());
 
 // Compress text responses
 app.use(compression());
