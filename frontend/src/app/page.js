@@ -13,7 +13,7 @@ export default function Home() {
         </svg>
       </div>
       <Navbar />
-      <div className="flex-1 z-10 pt-10">
+      <div className="flex-1 z-10">
         <Hero />
         <Features />
       </div>

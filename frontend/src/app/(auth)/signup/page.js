@@ -44,7 +44,7 @@ export default function Signup() {
 
   return (
     <div>
-      <h2 className="text-3xl font-display font-bold text-center text-foreground mb-2">Create an Account</h2>
+      <h2 className="text-2xl sm:text-3xl font-display font-bold text-center text-foreground mb-2">Create an Account</h2>
       <p className="text-center text-[#64748B] mb-8">Join ResumeGenie and land more offers</p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -96,7 +96,7 @@ export default function Signup() {
           {errors.passwordConfirm && <p className="text-sm text-destructive">{errors.passwordConfirm.message}</p>}
         </div>
 
-        <Button type="submit" variant="premium" className="w-full h-12 text-md mt-6 shadow-md" disabled={isLoading}>
+        <Button type="submit" variant="premium" className="w-full min-h-12 text-md mt-6 shadow-md" disabled={isLoading}>
           {isLoading ? "Creating account..." : "Sign Up"}
         </Button>
       </form>

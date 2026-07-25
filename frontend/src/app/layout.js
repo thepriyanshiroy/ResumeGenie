@@ -28,7 +28,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${playfair.variable} ${inter.variable} ${jetbrains.variable} font-body antialiased min-h-screen flex flex-col bg-background text-foreground`}>
+      <body className={`${playfair.variable} ${inter.variable} ${jetbrains.variable} font-body antialiased min-h-screen flex flex-col bg-background text-foreground overflow-x-hidden`}>
         {children}
         <Toaster position="top-right" />
       </body>

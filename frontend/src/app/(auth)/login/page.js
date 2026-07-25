@@ -39,7 +39,7 @@ export default function Login() {
 
   return (
     <div>
-      <h2 className="text-3xl font-display font-bold text-center text-foreground mb-2">Welcome Back</h2>
+      <h2 className="text-2xl sm:text-3xl font-display font-bold text-center text-foreground mb-2">Welcome Back</h2>
       <p className="text-center text-[#64748B] mb-8">Sign in to your account to continue</p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -72,7 +72,7 @@ export default function Login() {
           {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
         </div>
 
-        <Button type="submit" variant="premium" className="w-full h-12 text-md mt-4 shadow-md" disabled={isLoading}>
+        <Button type="submit" variant="premium" className="w-full min-h-12 text-md mt-4 shadow-md" disabled={isLoading}>
           {isLoading ? "Signing in..." : "Sign In"}
         </Button>
       </form>

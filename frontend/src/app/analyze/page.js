@@ -82,23 +82,23 @@ export default function AnalyzePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F9FC]">
+    <div className="min-h-screen bg-[#F5F9FC] overflow-x-hidden">
       <DashboardNavbar />
       
-      <main className="p-8 md:p-12 max-w-7xl mx-auto">
-        <div className="mb-10">
-          <h1 className="text-4xl font-bold font-display text-foreground mb-3">Analyze Your Resume</h1>
-          <p className="text-lg text-muted-foreground">Tell us about the role you&apos;re targeting to get tailored feedback.</p>
+      <main className="safe-x py-6 sm:p-8 md:p-12 max-w-7xl mx-auto">
+        <div className="mb-6 sm:mb-10">
+          <h1 className="text-3xl sm:text-4xl font-bold font-display text-foreground mb-3">Analyze Your Resume</h1>
+          <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">Tell us about the role you&apos;re targeting to get tailored feedback.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
           
           {/* Left Column: Upload */}
           <div className="flex flex-col">
             <label className="text-sm font-semibold text-foreground mb-2">1. Upload Resume</label>
             <div 
               {...getRootProps()} 
-              className={`flex-1 border-2 border-dashed rounded-3xl p-10 flex flex-col items-center justify-center text-center transition-colors cursor-pointer ${
+              className={`min-h-[320px] lg:min-h-[520px] border-2 border-dashed rounded-2xl p-6 sm:p-10 flex flex-col items-center justify-center text-center transition-colors cursor-pointer focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 ${
                 isDragActive ? 'border-primary bg-primary/5' : 'border-[#DDE4ED] bg-white hover:bg-gray-50'
               }`}
             >
@@ -109,7 +109,7 @@ export default function AnalyzePage() {
                   <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-6">
                     <Upload className="w-8 h-8 text-primary" />
                   </div>
-                  <h3 className="text-xl font-display font-semibold mb-2">Drag & drop your resume</h3>
+                  <h3 className="text-lg sm:text-xl font-display font-semibold mb-2">Drag & drop your resume</h3>
                   <p className="text-muted-foreground mb-6">or click to browse from your computer</p>
                   <p className="text-sm text-muted-foreground">PDF or DOCX, up to 5 MB. Your file is processed securely and never shared.</p>
                 </>
@@ -118,7 +118,7 @@ export default function AnalyzePage() {
                   <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-6">
                     <FileText className="w-8 h-8 text-green-600" />
                   </div>
-                  <h3 className="text-xl font-display font-semibold mb-2 text-foreground truncate max-w-xs">{file.name}</h3>
+                  <h3 className="text-lg sm:text-xl font-display font-semibold mb-2 text-foreground break-all max-w-full">{file.name}</h3>
                   <p className="text-muted-foreground mb-6">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                   <button type="button" onClick={(e) => { e.stopPropagation(); setFile(null); }} className="text-sm text-red-500 hover:underline">
                     Remove file
@@ -129,11 +129,11 @@ export default function AnalyzePage() {
           </div>
 
           {/* Right Column: Form details */}
-          <div className="bg-white rounded-3xl p-8 border border-border shadow-sm flex flex-col">
-            <h2 className="text-xl font-display font-semibold mb-6">2. Job Details</h2>
+          <div className="bg-white rounded-2xl p-5 sm:p-8 border border-border shadow-sm flex flex-col min-w-0">
+            <h2 className="text-lg sm:text-xl font-display font-semibold mb-6">2. Job Details</h2>
             
             <div className="space-y-5 flex-1">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
                   <label htmlFor="companyName" className="block text-sm font-semibold text-foreground mb-2">Company Name *</label>
                   <input 
@@ -143,7 +143,7 @@ export default function AnalyzePage() {
                     required
                     value={formData.companyName}
                     onChange={handleInputChange}
-                    className="w-full h-11 px-4 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white"
+                    className="w-full min-h-11 px-4 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white"
                     placeholder="e.g. Google"
                   />
                 </div>
@@ -157,7 +157,7 @@ export default function AnalyzePage() {
                     required
                     value={formData.jobTitle}
                     onChange={handleInputChange}
-                    className="w-full h-11 px-4 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white"
+                    className="w-full min-h-11 px-4 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white"
                     placeholder="e.g. Frontend Engineer"
                   />
                 </div>
@@ -170,7 +170,7 @@ export default function AnalyzePage() {
                   name="experienceLevel"
                   value={formData.experienceLevel}
                   onChange={handleInputChange}
-                  className="w-full h-11 px-4 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white"
+                  className="w-full min-h-11 px-4 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white"
                 >
                   <option value="Intern">Intern</option>
                   <option value="Entry">Entry Level</option>
@@ -188,7 +188,7 @@ export default function AnalyzePage() {
                   required
                   value={formData.jobDescription}
                   onChange={handleInputChange}
-                  className="w-full p-4 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white h-48 resize-none"
+                  className="w-full min-w-0 p-4 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white min-h-44 sm:min-h-48 resize-y"
                   placeholder="Paste the full job description here..."
                 />
               </div>
@@ -198,7 +198,7 @@ export default function AnalyzePage() {
               <button 
                 type="submit"
                 disabled={isSubmitting || !file}
-                className="w-full h-12 flex items-center justify-center rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full min-h-12 flex items-center justify-center rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 {isSubmitting ? (
                   <>

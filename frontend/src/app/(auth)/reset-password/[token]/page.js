@@ -70,7 +70,7 @@ export default function ResetPassword({ params }) {
 
   return (
     <div>
-      <h2 className="text-3xl font-display font-bold text-center text-foreground mb-2">Set New Password</h2>
+      <h2 className="text-2xl sm:text-3xl font-display font-bold text-center text-foreground mb-2">Set New Password</h2>
       <p className="text-center text-[#64748B] mb-8">
         Please enter your new password below.
       </p>
@@ -100,7 +100,7 @@ export default function ResetPassword({ params }) {
           {errors.passwordConfirm && <p className="text-sm text-destructive">{errors.passwordConfirm.message}</p>}
         </div>
 
-        <Button type="submit" variant="premium" className="w-full h-12 text-md mt-6 shadow-md" disabled={isLoading}>
+        <Button type="submit" variant="premium" className="w-full min-h-12 text-md mt-6 shadow-md" disabled={isLoading}>
           {isLoading ? "Saving..." : "Reset Password"}
         </Button>
       </form>

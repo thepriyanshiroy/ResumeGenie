@@ -44,19 +44,19 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F9FC]">
+    <div className="min-h-screen bg-[#F5F9FC] overflow-x-hidden">
       <DashboardNavbar />
       
-      <main className="p-8 md:p-12 max-w-7xl mx-auto">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-          <div>
-            <h1 className="text-3xl font-bold font-display text-foreground mb-2">My Resumes</h1>
+      <main className="safe-x py-6 sm:p-8 md:p-12 max-w-7xl mx-auto">
+        <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center mb-6 sm:mb-8 gap-4">
+          <div className="min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-bold font-display text-foreground mb-2">My Resumes</h1>
             <p className="text-muted-foreground">Analyze and track your resume scores</p>
           </div>
           
           <Link 
             href="/analyze" 
-            className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium h-10 px-4 py-2 bg-primary text-white hover:bg-primary/90 rounded-xl shadow-sm transition-colors"
+            className="inline-flex min-h-11 items-center justify-center whitespace-nowrap text-sm font-medium px-4 py-2 bg-primary text-white hover:bg-primary/90 rounded-xl shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             <Plus className="w-4 h-4 mr-2" />
             Analyze New Resume
@@ -64,35 +64,36 @@ export default function Dashboard() {
         </div>
         
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {[1, 2, 3, 4].map(i => (
               <div key={i} className="h-[320px] rounded-2xl bg-white border border-border animate-pulse shadow-sm" />
             ))}
           </div>
         ) : resumes.length === 0 ? (
-          <div className="mt-12 flex flex-col items-center justify-center py-20 border-2 border-dashed border-[#DDE4ED] rounded-3xl bg-white/50 text-center">
+          <div className="mt-8 sm:mt-12 flex flex-col items-center justify-center px-5 py-14 sm:py-20 border-2 border-dashed border-[#DDE4ED] rounded-2xl bg-white/50 text-center">
             <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4">
               <Search className="w-8 h-8 text-blue-300" />
             </div>
-            <h3 className="text-xl font-display font-semibold text-foreground mb-2">No resumes analyzed yet</h3>
+            <h3 className="text-lg sm:text-xl font-display font-semibold text-foreground mb-2">No resumes analyzed yet</h3>
             <p className="text-muted-foreground max-w-sm mb-6">Upload your first resume to get an AI-powered ATS score and actionable feedback.</p>
             <Link 
               href="/analyze" 
-              className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium h-10 px-6 py-2 bg-primary text-white hover:bg-primary/90 rounded-xl shadow-sm transition-colors"
+              className="inline-flex min-h-11 items-center justify-center whitespace-nowrap text-sm font-medium px-6 py-2 bg-primary text-white hover:bg-primary/90 rounded-xl shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               Get Started
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {resumes.map((resume) => (
-              <div key={resume._id} className="group relative bg-white border border-[#E2E8F0] rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow flex flex-col">
+              <div key={resume._id} className="group relative min-w-0 bg-white border border-[#E2E8F0] rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow flex flex-col">
                 
                 {/* Delete Button always visible on hover or focus */}
                 <button 
                   onClick={() => deleteResume(resume._id)}
-                  className="absolute top-6 right-6 p-2 bg-white/90 backdrop-blur-sm border border-red-100 text-red-500 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-red-50 z-10 shadow-sm"
+                  className="absolute top-6 right-6 p-2 bg-white/90 backdrop-blur-sm border border-red-100 text-red-500 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100 transition-all hover:bg-red-50 z-10 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
                   title="Delete Analysis"
+                  aria-label={`Delete ${resume.jobTitle} resume analysis`}
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>

@@ -5,7 +5,7 @@ const Label = forwardRef(({ className, ...props }, ref) => (
   <label
     ref={ref}
     className={clsx(
-      "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+      "block text-sm font-medium leading-snug peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
       className
     )}
     {...props}

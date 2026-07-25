@@ -36,14 +36,14 @@ export default function PdfThumbnail({ fileUrl, width = 300 }) {
           setError(true);
           setLoading(false);
         }}
-        className="flex items-center justify-center w-full"
+        className="flex items-center justify-center w-full max-w-full"
       >
         <Page 
           pageNumber={1} 
           width={width} 
           renderTextLayer={false} 
           renderAnnotationLayer={false} 
-          className="shadow-md"
+          className="max-w-full shadow-md [&_canvas]:!max-w-full [&_canvas]:!h-auto"
         />
       </Document>
     </div>

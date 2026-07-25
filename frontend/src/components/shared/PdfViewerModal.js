@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { X, FileText, Download } from "lucide-react";
 import "react-pdf/dist/Page/AnnotationLayer.css";
@@ -12,38 +12,52 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/b
 export default function PdfViewerModal({ fileUrl, fileName, onClose }) {
   const [numPages, setNumPages] = useState(null);
   const [error, setError] = useState(false);
+  const [pageWidth, setPageWidth] = useState(800);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      setPageWidth(Math.min(800, Math.max(280, window.innerWidth - 48)));
+    };
+
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 md:p-8">
-      <div className="bg-[#F8FAFC] rounded-2xl w-full max-w-5xl h-full flex flex-col shadow-2xl overflow-hidden relative animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm safe-x py-4 md:p-8">
+      <div className="bg-[#F8FAFC] rounded-2xl w-full max-w-5xl h-full max-h-[calc(100dvh-2rem)] flex flex-col shadow-2xl overflow-hidden relative animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="flex justify-between items-center px-6 py-4 bg-white border-b border-[#E2E8F0]">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-[#2563EB]">
+        <div className="flex justify-between items-center gap-3 px-4 sm:px-6 py-3 sm:py-4 bg-white border-b border-[#E2E8F0]">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="w-10 h-10 shrink-0 rounded-xl bg-blue-50 flex items-center justify-center text-[#2563EB]">
               <FileText className="w-5 h-5" />
             </div>
-            <div>
-              <h3 className="font-semibold text-foreground">{fileName || "Resume Preview"}</h3>
+            <div className="min-w-0">
+              <h3 className="truncate font-semibold text-foreground">{fileName || "Resume Preview"}</h3>
               {numPages && <p className="text-xs text-[#64748B]">{numPages} page{numPages > 1 ? 's' : ''}</p>}
             </div>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-2">
             <a 
               href={fileUrl}
               download
               target="_blank"
-              className="p-2 text-[#64748B] hover:text-[#2563EB] hover:bg-blue-50 rounded-full transition-colors flex items-center"
+              rel="noreferrer"
+              className="p-2 text-[#64748B] hover:text-[#2563EB] hover:bg-blue-50 rounded-xl transition-colors flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               title="Download PDF"
+              aria-label="Download PDF"
             >
               <Download className="w-5 h-5" />
             </a>
             <div className="w-px h-6 bg-[#E2E8F0] mx-1"></div>
             <button 
               onClick={onClose} 
-              className="p-2 text-[#64748B] hover:bg-red-50 hover:text-red-500 rounded-full transition-colors"
+              className="p-2 text-[#64748B] hover:bg-red-50 hover:text-red-500 rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
               title="Close Preview"
+              aria-label="Close preview"
             >
               <X className="w-6 h-6" />
             </button>
@@ -51,7 +65,7 @@ export default function PdfViewerModal({ fileUrl, fileName, onClose }) {
         </div>
         
         {/* PDF Body */}
-        <div className="flex-1 overflow-y-auto bg-[#E2E8F0]/50 p-4 md:p-8 flex flex-col items-center custom-scrollbar">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden bg-[#E2E8F0]/50 p-3 sm:p-4 md:p-8 flex flex-col items-center">
           {error ? (
             <div className="flex flex-col items-center justify-center text-muted-foreground w-full h-full">
               <FileText className="w-16 h-16 mb-4 text-[#CBD5E1]" />
@@ -63,16 +77,16 @@ export default function PdfViewerModal({ fileUrl, fileName, onClose }) {
               file={fileUrl} 
               onLoadSuccess={({ numPages }) => setNumPages(numPages)}
               onLoadError={() => setError(true)}
-              className="flex flex-col items-center gap-6 w-full max-w-3xl"
+              className="flex flex-col items-center gap-4 sm:gap-6 w-full max-w-3xl"
             >
               {Array.from(new Array(numPages || 1), (el, index) => (
                 <div key={`page_${index + 1}`} className="shadow-lg rounded overflow-hidden w-full max-w-full flex justify-center bg-white">
                   <Page 
                     pageNumber={index + 1} 
-                    width={800} 
+                    width={pageWidth} 
                     renderTextLayer={false} 
                     renderAnnotationLayer={false}
-                    className="max-w-full"
+                    className="max-w-full [&_canvas]:!max-w-full [&_canvas]:!h-auto"
                   />
                 </div>
               ))}

@@ -37,7 +37,7 @@ export default function ForgotPassword() {
 
   return (
     <div>
-      <h2 className="text-3xl font-display font-bold text-center text-foreground mb-2">Reset Password</h2>
+      <h2 className="text-2xl sm:text-3xl font-display font-bold text-center text-foreground mb-2">Reset Password</h2>
       <p className="text-center text-[#64748B] mb-8">
         Enter your email and we&apos;ll send you a link to reset your password.
       </p>
@@ -56,7 +56,7 @@ export default function ForgotPassword() {
             {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
           </div>
 
-          <Button type="submit" variant="premium" className="w-full h-12 text-md mt-4 shadow-md" disabled={isLoading}>
+          <Button type="submit" variant="premium" className="w-full min-h-12 text-md mt-4 shadow-md" disabled={isLoading}>
             {isLoading ? "Sending..." : "Send Reset Link"}
           </Button>
         </form>
