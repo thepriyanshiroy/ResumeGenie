@@ -41,17 +41,37 @@ export default function PdfViewerModal({ fileUrl, fileName, onClose }) {
           </div>
           
           <div className="flex shrink-0 items-center gap-1 sm:gap-2">
-            <a 
-              href={fileUrl}
-              download
-              target="_blank"
-              rel="noreferrer"
+            <button 
+              onClick={async (e) => {
+                e.preventDefault();
+                try {
+                  const res = await fetch(fileUrl);
+                  const blob = await res.blob();
+                  const blobUrl = window.URL.createObjectURL(blob);
+                  const link = document.createElement('a');
+                  link.href = blobUrl;
+                  
+                  let downloadName = fileName || 'resume.pdf';
+                  if (!downloadName.toLowerCase().endsWith('.pdf')) {
+                    downloadName += '.pdf';
+                  }
+                  
+                  link.download = downloadName;
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                  window.URL.revokeObjectURL(blobUrl);
+                } catch (error) {
+                  console.error('Download failed:', error);
+                  window.open(fileUrl, '_blank');
+                }
+              }}
               className="p-2 text-[#64748B] hover:text-[#2563EB] hover:bg-blue-50 rounded-xl transition-colors flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               title="Download PDF"
               aria-label="Download PDF"
             >
               <Download className="w-5 h-5" />
-            </a>
+            </button>
             <div className="w-px h-6 bg-[#E2E8F0] mx-1"></div>
             <button 
               onClick={onClose} 

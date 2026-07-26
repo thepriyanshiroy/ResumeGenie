@@ -24,8 +24,11 @@ const storage = process.env.CLOUDINARY_CLOUD_NAME
       params: {
         folder: 'resume-genie/uploads',
         resource_type: 'raw', // Required for raw files like PDFs
-        allowed_formats: ['pdf', 'docx'],
-        format: async (req, file) => file.originalname.split('.').pop()
+        public_id: (req, file) => {
+          const ext = file.originalname.split('.').pop();
+          const name = file.originalname.replace(`.${ext}`, '').replace(/[^a-zA-Z0-9-_]/g, '');
+          return `${Date.now()}-${name}.${ext}`;
+        }
       }
     })
   : multer.diskStorage({
@@ -33,7 +36,9 @@ const storage = process.env.CLOUDINARY_CLOUD_NAME
         cb(null, 'uploads/');
       },
       filename: (req, file, cb) => {
-        const uniqueSuffix = `${Date.now()}-${file.originalname}`;
+        const ext = file.originalname.split('.').pop();
+        const name = file.originalname.replace(`.${ext}`, '').replace(/[^a-zA-Z0-9-_]/g, '');
+        const uniqueSuffix = `${Date.now()}-${name}.${ext}`;
         cb(null, uniqueSuffix);
       }
     });
