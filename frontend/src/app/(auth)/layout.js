@@ -7,7 +7,7 @@ export default function AuthLayout({ children }) {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-[#F5F9FC] flex flex-col items-center justify-center safe-x py-6 sm:p-6 relative overflow-hidden">
+    <div className="min-h-[100dvh] bg-[#F5F9FC] flex flex-col items-center justify-center safe-x py-3 sm:p-6 relative overflow-x-hidden">
       {/* Decorative background curve */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
         <svg viewBox="0 0 1440 800" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full object-cover opacity-30" preserveAspectRatio="none">
@@ -16,7 +16,7 @@ export default function AuthLayout({ children }) {
       </div>
 
       <div className="w-full max-w-md">
-        <div className="flex flex-col items-center mb-6 sm:mb-8 relative">
+        <div className="flex flex-col items-center mb-3 sm:mb-6 relative">
           <button 
             onClick={() => router.back()} 
             className="absolute left-0 top-1/2 -translate-y-1/2 flex min-h-10 items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg"
@@ -25,17 +25,17 @@ export default function AuthLayout({ children }) {
             Back
           </button>
           
-          <Link href="/" className="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
-            <div className="h-10 w-10 rounded-xl flex items-center justify-center text-white font-bold text-lg bg-primary shadow-lg">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 cursor-pointer hover:opacity-90 transition-opacity">
+            <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center text-white font-bold text-base sm:text-lg bg-primary shadow-lg">
               R
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground font-display">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground font-display">
               ResumeGenie
             </h1>
           </Link>
         </div>
         
-        <div className="bg-card shadow-[0_8px_32px_-4px_rgba(45,107,230,0.08)] rounded-2xl p-5 sm:p-8 border border-white/60">
+        <div className="bg-card shadow-[0_8px_32px_-4px_rgba(45,107,230,0.08)] rounded-2xl p-4 sm:p-8 border border-white/60">
           {children}
         </div>
       </div>

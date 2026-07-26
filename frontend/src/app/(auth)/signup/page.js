@@ -44,64 +44,64 @@ export default function Signup() {
 
   return (
     <div>
-      <h2 className="text-2xl sm:text-3xl font-display font-bold text-center text-foreground mb-2">Create an Account</h2>
-      <p className="text-center text-[#64748B] mb-8">Join ResumeGenie and land more offers</p>
+      <h2 className="text-xl sm:text-3xl font-display font-bold text-center text-foreground mb-1 sm:mb-2">Create an Account</h2>
+      <p className="text-center text-sm sm:text-base text-[#64748B] mb-2 sm:mb-8">Join ResumeGenie and land more offers</p>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="space-y-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 sm:space-y-4">
+        <div className="space-y-1 sm:space-y-2">
           <Label htmlFor="name">Full Name</Label>
           <Input 
             id="name" 
             type="text" 
             placeholder="e.g. John Doe" 
-            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary h-12"
+            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary !min-h-10 !h-10 sm:!min-h-12 sm:!h-12"
             {...register("name")} 
           />
           {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1 sm:space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input 
             id="email" 
             type="email" 
             placeholder="e.g. you@example.com" 
-            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary h-12"
+            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary !min-h-10 !h-10 sm:!min-h-12 sm:!h-12"
             {...register("email")} 
           />
           {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1 sm:space-y-2">
           <Label htmlFor="password">Password</Label>
           <Input 
             id="password" 
             type="password" 
             placeholder="••••••••" 
-            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary h-12"
+            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary !min-h-10 !h-10 sm:!min-h-12 sm:!h-12"
             {...register("password")} 
           />
           {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1 sm:space-y-2">
           <Label htmlFor="passwordConfirm">Confirm Password</Label>
           <Input 
             id="passwordConfirm" 
             type="password" 
             placeholder="••••••••" 
-            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary h-12"
+            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary !min-h-10 !h-10 sm:!min-h-12 sm:!h-12"
             {...register("passwordConfirm")} 
           />
           {errors.passwordConfirm && <p className="text-sm text-destructive">{errors.passwordConfirm.message}</p>}
         </div>
 
-        <Button type="submit" variant="premium" className="w-full min-h-12 text-md mt-6 shadow-md" disabled={isLoading}>
+        <Button type="submit" variant="premium" className="w-full !min-h-10 sm:!min-h-12 text-md mt-2 sm:mt-6 shadow-md" disabled={isLoading}>
           {isLoading ? "Creating account..." : "Sign Up"}
         </Button>
       </form>
 
-      <div className="mt-8 text-center text-sm text-[#64748B]">
+      <div className="mt-3 sm:mt-8 text-center text-sm text-[#64748B]">
         Already have an account?{" "}
         <Link href="/login" className="text-primary font-medium hover:underline">
           Sign in

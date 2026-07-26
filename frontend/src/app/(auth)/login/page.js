@@ -39,23 +39,23 @@ export default function Login() {
 
   return (
     <div>
-      <h2 className="text-2xl sm:text-3xl font-display font-bold text-center text-foreground mb-2">Welcome Back</h2>
-      <p className="text-center text-[#64748B] mb-8">Sign in to your account to continue</p>
+      <h2 className="text-xl sm:text-3xl font-display font-bold text-center text-foreground mb-1 sm:mb-2">Welcome Back</h2>
+      <p className="text-center text-sm sm:text-base text-[#64748B] mb-4 sm:mb-8">Sign in to your account to continue</p>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-        <div className="space-y-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-5">
+        <div className="space-y-1.5 sm:space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input 
             id="email" 
             type="email" 
             placeholder="e.g. you@example.com" 
-            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary h-12"
+            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary h-10 sm:h-12"
             {...register("email")} 
           />
           {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1.5 sm:space-y-2">
           <div className="flex justify-between items-center">
             <Label htmlFor="password">Password</Label>
             <Link href="/forgot-password" className="text-sm text-primary hover:underline">
@@ -66,18 +66,18 @@ export default function Login() {
             id="password" 
             type="password" 
             placeholder="••••••••" 
-            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary h-12"
+            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary h-10 sm:h-12"
             {...register("password")} 
           />
           {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
         </div>
 
-        <Button type="submit" variant="premium" className="w-full min-h-12 text-md mt-4 shadow-md" disabled={isLoading}>
+        <Button type="submit" variant="premium" className="w-full min-h-10 sm:min-h-12 text-md mt-2 sm:mt-4 shadow-md" disabled={isLoading}>
           {isLoading ? "Signing in..." : "Sign In"}
         </Button>
       </form>
 
-      <div className="mt-8 text-center text-sm text-[#64748B]">
+      <div className="mt-4 sm:mt-8 text-center text-sm text-[#64748B]">
         Don&apos;t have an account?{" "}
         <Link href="/signup" className="text-primary font-medium hover:underline">
           Sign up
