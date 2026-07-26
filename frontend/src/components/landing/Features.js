@@ -24,7 +24,7 @@ export default function Features() {
     <section className="w-full safe-x py-10 sm:py-14 md:py-16 md:px-20 max-w-7xl mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
         {features.map((feature, index) => (
-          <div key={index} className="flex min-w-0 flex-col items-center text-center p-6 sm:p-8 lg:p-10 rounded-2xl bg-card shadow-[0_4px_40px_rgba(45,107,230,0.06)] hover:shadow-[0_8px_40px_rgba(45,107,230,0.12)] transition-shadow duration-300">
+          <div key={index} className={`flex min-w-0 flex-col items-center text-center p-6 sm:p-8 lg:p-10 rounded-2xl bg-card shadow-[0_4px_40px_rgba(45,107,230,0.06)] hover:shadow-[0_8px_40px_rgba(45,107,230,0.12)] transition-shadow duration-300 ${index === features.length - 1 ? "sm:col-span-2 sm:w-[calc((100%-1.5rem)/2)] sm:justify-self-center lg:col-span-1 lg:w-full" : ""}`}>
             <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-[#EBF1FA] flex items-center justify-center mb-5 sm:mb-6">
               {feature.icon}
             </div>
