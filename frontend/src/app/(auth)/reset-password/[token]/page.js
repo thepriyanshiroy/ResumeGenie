@@ -1,9 +1,9 @@
 "use client";
-import { useState, use } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
@@ -18,10 +18,10 @@ const resetSchema = z.object({
   path: ["passwordConfirm"],
 });
 
-export default function ResetPassword({ params }) {
+export default function ResetPassword() {
   const router = useRouter();
-  // Unwrap params using React.use() for Next.js 15+ dynamic params
-  const { token } = use(params);
+  const params = useParams();
+  const token = params?.token;
   
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);

@@ -1,7 +1,7 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import DashboardNavbar from "@/components/dashboard/DashboardNavbar";
 import { ArrowLeft, CheckCircle2, AlertCircle, XCircle, FileText, Check, X, AlertTriangle, Lightbulb, BarChart3, Target, Zap, TrendingUp, Award } from "lucide-react";
 import Link from "next/link";
@@ -11,8 +11,9 @@ import dynamic from "next/dynamic";
 const PdfThumbnail = dynamic(() => import("@/components/shared/PdfThumbnail"), { ssr: false });
 const PdfViewerModal = dynamic(() => import("@/components/shared/PdfViewerModal"), { ssr: false });
 
-export default function ResultsPage({ params }) {
-  const { id } = use(params);
+export default function ResultsPage() {
+  const params = useParams();
+  const id = params?.id;
   const router = useRouter();
   const [analysis, setAnalysis] = useState(null);
   const [resume, setResume] = useState(null);
@@ -40,10 +41,7 @@ export default function ResultsPage({ params }) {
     }
   }, [id]);
 
-  const getBaseUrl = () => {
-    const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
-    return url.replace('/api/v1', '');
-  };
+
 
   const handleDelete = async () => {
     if (!confirm("Are you sure you want to delete this resume and its analysis?")) return;
@@ -140,7 +138,7 @@ export default function ResultsPage({ params }) {
               <div className="bg-[#F1F5F9] rounded-xl w-full aspect-[4/5] max-h-[420px] flex flex-col items-center justify-center overflow-hidden mb-4 relative">
                 {resume?.storedFileName ? (
                   <PdfThumbnail 
-                    fileUrl={resume?.filePath?.startsWith('http') ? resume.filePath : `${getBaseUrl()}/uploads/${resume.storedFileName}`} 
+                    fileUrl={resume?.filePath?.startsWith('http') ? resume.filePath : `/uploads/${resume.storedFileName}`} 
                     width={400} 
                   />
                 ) : (
@@ -437,7 +435,7 @@ export default function ResultsPage({ params }) {
 
       {showPdfModal && (
         <PdfViewerModal 
-          fileUrl={resume?.filePath?.startsWith('http') ? resume.filePath : `${getBaseUrl()}/uploads/${resume?.storedFileName}`} 
+          fileUrl={resume?.filePath?.startsWith('http') ? resume.filePath : `/uploads/${resume?.storedFileName}`} 
           fileName={resume?.originalFileName}
           onClose={() => setShowPdfModal(false)}
         />

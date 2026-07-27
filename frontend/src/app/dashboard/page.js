@@ -44,10 +44,7 @@ export default function Dashboard() {
     }
   };
 
-  const getBaseUrl = () => {
-    const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
-    return url.replace('/api/v1', '');
-  };
+
 
   return (
     <div className="min-h-screen bg-[#F5F9FC] overflow-x-hidden">
@@ -107,7 +104,7 @@ export default function Dashboard() {
                 {/* PDF Thumbnail */}
                 <div className="mb-4 aspect-[3/4] bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] overflow-hidden flex items-center justify-center relative">
                   {resume.storedFileName ? (
-                    <PdfThumbnail fileUrl={resume.filePath?.startsWith('http') ? resume.filePath : `${getBaseUrl()}/uploads/${resume.storedFileName}`} width={300} />
+                    <PdfThumbnail fileUrl={resume.filePath?.startsWith('http') ? resume.filePath : `/uploads/${resume.storedFileName}`} width={300} />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-white to-[#F1F5F9] relative flex items-center justify-center text-[#94A3B8]">
                        No Preview
