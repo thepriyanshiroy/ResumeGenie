@@ -18,30 +18,17 @@ cloudinary.config({
 });
 
 // Configure where and how files are stored
-const storage = process.env.CLOUDINARY_CLOUD_NAME 
-  ? new CloudinaryStorage({
-      cloudinary: cloudinary,
-      params: {
-        folder: 'resume-genie/uploads',
-        resource_type: 'raw', // Required for raw files like PDFs
-        public_id: (req, file) => {
-          const ext = file.originalname.split('.').pop();
-          const name = file.originalname.replace(`.${ext}`, '').replace(/[^a-zA-Z0-9-_]/g, '');
-          return `${Date.now()}-${name}.${ext}`;
-        }
-      }
-    })
-  : multer.diskStorage({
-      destination: (req, file, cb) => {
-        cb(null, 'uploads/');
-      },
-      filename: (req, file, cb) => {
-        const ext = file.originalname.split('.').pop();
-        const name = file.originalname.replace(`.${ext}`, '').replace(/[^a-zA-Z0-9-_]/g, '');
-        const uniqueSuffix = `${Date.now()}-${name}.${ext}`;
-        cb(null, uniqueSuffix);
-      }
-    });
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    const ext = file.originalname.split('.').pop();
+    const name = file.originalname.replace(`.${ext}`, '').replace(/[^a-zA-Z0-9-_]/g, '');
+    const uniqueSuffix = `${Date.now()}-${name}.${ext}`;
+    cb(null, uniqueSuffix);
+  }
+});
 
 // Allow PDF and DOCX files
 const fileFilter = (req, file, cb) => {

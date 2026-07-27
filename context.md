@@ -1,6 +1,6 @@
 # ResumeGenie Project Context
 
-Last reviewed by Codex: 2026-07-25
+Last reviewed by Codex: 2026-07-26
 
 ## What This Project Is
 
@@ -27,6 +27,7 @@ Frontend:
 - `react-dropzone` for uploads.
 - `react-pdf` for PDF thumbnails and modal preview.
 - `recharts` is installed, though current result charts are mostly custom SVG/progress UI.
+- `frontend/next.config.mjs` enables React Compiler and sets `turbopack.root` to the frontend directory to avoid multiple-lockfile workspace-root warnings.
 
 Backend:
 
@@ -275,7 +276,7 @@ Auth/session behavior:
 
 - Login/signup/reset password store `response.data.token` in `localStorage`.
 - Protected frontend routes do not appear to have middleware/guards yet.
-- Logout calls `GET /users/logout` and redirects home, but it does not remove `localStorage.token`. This is likely a bug because the backend auth middleware ignores cookies and trusts the Bearer token.
+- Logout calls `GET /users/logout`, removes `localStorage.token`, and redirects home.
 
 Upload/analyze flow:
 
@@ -295,6 +296,7 @@ PDF preview behavior:
   - `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 - Local file URLs are built by removing `/api/v1` from API base and appending `/uploads/<storedFileName>`.
 - Cloudinary URLs use `resume.filePath` directly.
+- `PdfViewerModal` computes a viewport-safe page width and constrains PDF canvases to avoid mobile horizontal overflow.
 
 ## Styling and UI Conventions
 
@@ -311,11 +313,13 @@ Theme:
 Conventions currently used:
 
 - Tailwind utility classes inline in components.
-- Many app cards use `rounded-3xl`; reusable `Button` uses rounded-full.
+- App cards generally use `rounded-2xl`; reusable `Button`, `Input`, and modal controls use `rounded-xl`.
 - Lucide icons are standard.
 - Main app background is often `#F5F9FC`.
 - Card borders commonly use `#E2E8F0` or `border-border`.
 - Auth and dashboard surfaces use soft shadows and white cards.
+- Global layout uses `overflow-x-hidden`; `globals.css` defines `safe-x` for safe-area horizontal padding and `no-scrollbar` for hidden-scrollbar panels.
+- The responsive refactor favors mobile-first spacing, `min-w-0` on shrinkable flex/grid children, adaptive grids, and smaller mobile headings.
 
 Note: Several files contain mojibake characters, especially where dashes, bullets, checkmarks, arrows, and emoji were intended. Preserve ASCII when editing unless intentionally fixing encoding.
 
@@ -325,15 +329,15 @@ Note: Several files contain mojibake characters, especially where dashes, bullet
 - `backend/README.md` says Nodemailer/SMTP, but email code uses Brevo API.
 - Upload accepts DOCX, but `pdfParser.js` only supports PDF parsing with `pdf-parse`.
 - Backend sets JWT cookies, but `authMiddleware.protect` only reads the Authorization Bearer header.
-- Logout does not clear `localStorage.token` in `DashboardNavbar.jsx`.
 - `deleteResume` may delete files twice: `resumeController.deleteResume` manually deletes file/analysis after `findOneAndDelete`, and `resumeModel` also has a `pre('findOneAndDelete')` hook that deletes them.
 - `resumeController.analyzeResume` uses `Resume.findById(req.params.id)` without checking `user`, so a user with a valid token could potentially analyze another user's resume by id. `getResumeAnalysis` is user-scoped.
 - `errorController.js` always returns stack traces and full error objects.
 - `User.createPasswordResetToken` logs reset tokens to console.
 - `DashboardNavbar` imports `api.get("/users/logout")`; backend supports both GET and POST logout.
-- `frontend/next.config.mjs` enables `reactCompiler: true`.
+- `frontend/next.config.mjs` enables `reactCompiler: true` and `turbopack.root`.
 - `node_modules/` exists at repo root and is not ignored by current `.gitignore`; backend/frontend node_modules are ignored.
 - `backend/uploads/` contains at least one sample PDF and is not ignored in `.gitignore`.
+- Browser-based responsive validation was attempted with Playwright, but this Windows environment lacked Chrome at the path expected by Playwright CLI. Lint and production build passed after the responsive refactor.
 
 ## Editing Guidance for Future Codex Work
 
@@ -349,6 +353,7 @@ Note: Several files contain mojibake characters, especially where dashes, bullet
   - `backend/src/utils/pdfParser.js`
 - For frontend API calls, use the shared Axios instance from `@/lib/axios`.
 - For UI, match the existing Tailwind style and use lucide icons when adding controls.
+- For responsive UI work, preserve the current mobile-first pattern: `safe-x`, constrained max widths, `min-w-0`, adaptive grids, and viewport-safe PDF sizing.
 - For auth forms, follow the existing `react-hook-form` + `zod` pattern.
 - Avoid relying on cookies for authenticated API calls unless `authMiddleware.protect` is updated to read them.
 - Run frontend lint/build after UI changes when feasible.

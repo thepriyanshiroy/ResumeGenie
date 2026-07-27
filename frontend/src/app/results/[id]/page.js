@@ -57,7 +57,6 @@ export default function ResultsPage({ params }) {
   };
 
   const handleSave = () => {
-    window.print();
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 3000);
   };
@@ -102,12 +101,14 @@ export default function ResultsPage({ params }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F9FC] flex flex-col font-sans overflow-x-hidden">
-      <DashboardNavbar />
+    <div className="min-h-screen bg-[#F5F9FC] flex flex-col font-sans overflow-x-hidden print:bg-white print:min-h-0 print:overflow-visible">
+      <div className="print:hidden">
+        <DashboardNavbar />
+      </div>
       
-      <main className="flex-1 max-w-[1400px] w-full mx-auto safe-x py-4 sm:p-6 md:p-8">
+      <main className="flex-1 max-w-[1400px] w-full mx-auto safe-x py-4 sm:p-6 md:p-8 print:p-0 print:m-0 print:max-w-none">
         {/* Subheader: Back link and Action buttons */}
-        <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 mb-6 print:hidden">
           <Link href="/dashboard" className="text-[#64748B] hover:text-foreground flex items-center text-sm font-medium w-fit transition-colors">
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
           </Link>
@@ -129,10 +130,10 @@ export default function ResultsPage({ params }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 sm:gap-6 xl:gap-8 items-start">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 sm:gap-6 xl:gap-8 items-start print:flex print:flex-col print:gap-8">
           
           {/* Left Column */}
-          <div className="xl:col-span-4 min-w-0 flex flex-col gap-5 sm:gap-6 xl:sticky xl:top-24 xl:max-h-[calc(100vh-7rem)] overflow-y-auto no-scrollbar">
+          <div className="xl:col-span-4 min-w-0 flex flex-col gap-5 sm:gap-6 xl:sticky xl:top-24 xl:max-h-[calc(100vh-7rem)] overflow-y-auto no-scrollbar print:static print:max-h-none print:overflow-visible print:block">
             
             {/* Resume Preview */}
             <div className="bg-white rounded-2xl p-4 sm:p-6 border border-[#E2E8F0] shadow-sm flex flex-col items-center text-center shrink-0">
@@ -156,7 +157,7 @@ export default function ResultsPage({ params }) {
               
               <button 
                 onClick={() => setShowPdfModal(true)}
-                className="w-full py-2.5 bg-[#F8FAFC] hover:bg-[#F1F5F9] border border-[#E2E8F0] text-[#64748B] text-sm font-semibold rounded-xl transition-colors flex items-center justify-center"
+                className="w-full py-2.5 bg-[#F8FAFC] hover:bg-[#F1F5F9] border border-[#E2E8F0] text-[#64748B] text-sm font-semibold rounded-xl transition-colors flex items-center justify-center print:hidden"
                 disabled={!resume?.storedFileName}
               >
                 <FileText className="w-4 h-4 mr-2" /> Preview Full PDF

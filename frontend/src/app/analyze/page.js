@@ -2,8 +2,9 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useDropzone } from "react-dropzone";
-import { Upload, FileText, Loader2, ArrowRight } from "lucide-react";
+import { Upload, FileText, Loader2, ArrowRight, ArrowLeft } from "lucide-react";
 import DashboardNavbar from "@/components/dashboard/DashboardNavbar";
 import api from "@/lib/axios";
 import { toast } from "react-hot-toast";
@@ -86,9 +87,14 @@ export default function AnalyzePage() {
       <DashboardNavbar />
       
       <main className="safe-x py-6 sm:p-8 md:p-12 max-w-7xl mx-auto">
-        <div className="mb-6 sm:mb-10">
-          <h1 className="text-3xl sm:text-4xl font-bold font-display text-foreground mb-3">Analyze Your Resume</h1>
-          <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">Tell us about the role you&apos;re targeting to get tailored feedback.</p>
+        <div className="mb-6 sm:mb-10 flex flex-col gap-4">
+          <Link href="/dashboard" className="text-[#64748B] hover:text-foreground flex items-center text-sm font-medium w-fit transition-colors">
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
+          </Link>
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-bold font-display text-foreground mb-3">Analyze Your Resume</h1>
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">Tell us about the role you&apos;re targeting to get tailored feedback.</p>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">

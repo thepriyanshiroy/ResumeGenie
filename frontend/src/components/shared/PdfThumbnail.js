@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { FileText } from "lucide-react";
 import "react-pdf/dist/Page/AnnotationLayer.css";
@@ -12,6 +12,27 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/b
 export default function PdfThumbnail({ fileUrl, width = 300 }) {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Suppress the expected 401 warning in development so it doesn't trigger the Next.js error overlay
+    const originalWarn = console.warn;
+    const originalError = console.error;
+    
+    console.warn = (...args) => {
+      if (typeof args[0] === 'string' && args[0].includes('Unexpected server response (401)')) return;
+      originalWarn(...args);
+    };
+    
+    console.error = (...args) => {
+      if (typeof args[0] === 'string' && args[0].includes('Unexpected server response (401)')) return;
+      originalError(...args);
+    };
+
+    return () => {
+      console.warn = originalWarn;
+      console.error = originalError;
+    };
+  }, []);
 
   if (error) {
     return (

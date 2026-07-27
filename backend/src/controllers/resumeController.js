@@ -7,22 +7,24 @@ const parsePDF = require('../utils/pdfParser');
 const geminiService = require("../services/geminiService");
 const logger = require("../utils/logger");
 exports.uploadResume = catchAsync(async (req, res, next) => {
+    let finalFilePath = req.file.path;
+    let finalStoredFileName = req.file.filename;
+
+    const extractedText = await parsePDF(req.file.path);
+
     const resume = await Resume.create({
         user: req.user.id,
         companyName: req.body.companyName,
         jobTitle: req.body.jobTitle,
         jobDescription: req.body.jobDescription,
         originalFileName: req.file.originalname,
-        storedFileName: req.file.filename,
-        filePath: req.file.path,
+        storedFileName: finalStoredFileName,
+        filePath: finalFilePath,
         mimeType: req.file.mimetype,
-        fileSize: req.file.size
+        fileSize: req.file.size,
+        extractedText,
+        status: 'parsed'
     });
-    const extractedText = await parsePDF(req.file.path);
-    resume.extractedText = extractedText;
-    resume.status = 'parsed';
-
-    await resume.save();
     res.status(201).json({
         status: 'success',
         data: {

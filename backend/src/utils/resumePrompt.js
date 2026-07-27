@@ -11,11 +11,11 @@ Format guidelines:
 - keywordAnalysis: priority should be "Critical", "High", "Medium", or "Low".
 - strengths: description must be 1 short sentence (e.g. "Clean, ATS-friendly formatting with proper section headers").
 - improvements: description must be very brief and actionable (e.g. "Include keywords: 'system design' from JD").
-- aiSuggestions: provide 3 actionable tips:
-  1. Quick win (e.g. Add a summary).
-  2. Missing keywords.
-  3. Improve bullet points (Provide a concise "before" and "after" example).
-- resumeSections: provide a brief status ("Complete", "Missing", "Needs Improvement") and a 1-sentence feedback.
+- aiSuggestions: provide exactly 3 actionable tips using these exact types:
+  1. type: "summary" - Quick win (e.g. Add or improve professional summary).
+  2. type: "keywords" - Missing keywords to add.
+  3. type: "bullet" - Improve bullet points (Provide a concise "before" and "after" example).
+- resumeSections: You MUST evaluate all 7 standard sections (Contact Info, Professional Summary, Work Experience, Skills, Education, Projects, Certifications). Provide a brief status ("Complete", "Missing", "Needs Improvement") and a 1-sentence feedback for each.
 
 Company:
 ${companyName}

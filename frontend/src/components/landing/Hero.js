@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <section className="relative w-full safe-x pt-10 pb-12 sm:pt-14 sm:pb-16 md:pt-20 md:pb-24 flex flex-col items-center text-center">
+    <section className="relative w-full min-h-[calc(100dvh-64px)] sm:min-h-0 safe-x pt-10 pb-12 sm:pt-14 sm:pb-16 md:pt-20 md:pb-24 flex flex-col items-center justify-center sm:justify-start text-center">
       {/* Decorative element */}
       <div className="mb-6 sm:mb-8 flex items-center justify-center h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-[#EBF1FA] text-primary">
         <Sparkles className="h-6 w-6" strokeWidth={1.5} />

@@ -29,12 +29,18 @@ export default function Dashboard() {
     fetchResumes();
   }, []);
 
-  const deleteResume = async (id) => {
+  const deleteResume = async (id, e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (!window.confirm("Are you sure you want to delete this resume and its analysis?")) return;
     try {
       await api.delete(`/resumes/${id}`);
       setResumes((prev) => prev.filter((r) => r._id !== id));
     } catch (err) {
       console.error("Failed to delete resume", err);
+      alert("Failed to delete resume.");
     }
   };
 
@@ -90,7 +96,7 @@ export default function Dashboard() {
                 
                 {/* Delete Button always visible on hover or focus */}
                 <button 
-                  onClick={() => deleteResume(resume._id)}
+                  onClick={(e) => deleteResume(resume._id, e)}
                   className="absolute top-6 right-6 p-2 bg-white/90 backdrop-blur-sm border border-red-100 text-red-500 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100 transition-all hover:bg-red-50 z-10 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
                   title="Delete Analysis"
                   aria-label={`Delete ${resume.jobTitle} resume analysis`}

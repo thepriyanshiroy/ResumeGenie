@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { X, FileText, Download } from "lucide-react";
+import { X, FileText, Download, ArrowLeft } from "lucide-react";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
@@ -21,7 +21,26 @@ export default function PdfViewerModal({ fileUrl, fileName, onClose }) {
 
     updateWidth();
     window.addEventListener("resize", updateWidth);
-    return () => window.removeEventListener("resize", updateWidth);
+
+    // Suppress the expected 401 warning in development so it doesn't trigger the Next.js error overlay
+    const originalWarn = console.warn;
+    const originalError = console.error;
+    
+    console.warn = (...args) => {
+      if (typeof args[0] === 'string' && args[0].includes('Unexpected server response (401)')) return;
+      originalWarn(...args);
+    };
+    
+    console.error = (...args) => {
+      if (typeof args[0] === 'string' && args[0].includes('Unexpected server response (401)')) return;
+      originalError(...args);
+    };
+
+    return () => {
+      window.removeEventListener("resize", updateWidth);
+      console.warn = originalWarn;
+      console.error = originalError;
+    };
   }, []);
 
   return (
@@ -31,6 +50,13 @@ export default function PdfViewerModal({ fileUrl, fileName, onClose }) {
         {/* Header */}
         <div className="flex justify-between items-center gap-3 px-4 sm:px-6 py-3 sm:py-4 bg-white border-b border-[#E2E8F0]">
           <div className="flex min-w-0 items-center gap-3">
+            <button 
+              onClick={onClose} 
+              className="sm:hidden p-2 -ml-2 text-[#64748B] hover:text-foreground hover:bg-gray-100 rounded-xl transition-colors focus-visible:outline-none"
+              title="Back"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
             <div className="w-10 h-10 shrink-0 rounded-xl bg-blue-50 flex items-center justify-center text-[#2563EB]">
               <FileText className="w-5 h-5" />
             </div>
