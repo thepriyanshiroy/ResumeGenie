@@ -48,16 +48,16 @@ function ProcessingContent() {
   }, [steps.length]);
 
   return (
-    <div className="min-h-screen bg-[#F5F9FC] flex flex-col items-center justify-center safe-x py-8 relative">
+    <div className="min-h-[100dvh] bg-[#F5F9FC] flex flex-col items-center justify-center safe-x py-8 relative">
       <button 
         onClick={() => router.replace('/dashboard')} 
-        className="absolute top-6 left-6 p-2 text-[#64748B] hover:text-foreground hover:bg-gray-100 rounded-xl transition-colors focus-visible:outline-none flex items-center text-sm font-medium"
+        className="absolute top-4 sm:top-6 left-4 sm:left-6 p-2 text-[#64748B] hover:text-foreground hover:bg-gray-100 rounded-xl transition-colors focus-visible:outline-none flex items-center text-sm font-medium z-10"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
         Cancel & Back
       </button>
 
-      <div className="bg-white rounded-2xl p-6 sm:p-10 max-w-md w-full shadow-[0_10px_30px_-10px_rgba(45,107,230,0.1)] text-center border border-border relative overflow-hidden mt-8">
+      <div className="bg-white rounded-2xl p-6 sm:p-10 max-w-md w-full shadow-[0_10px_30px_-10px_rgba(45,107,230,0.1)] text-center border border-border relative overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-[length:200%_100%] animate-[shimmer_2s_infinite]" />
         
         <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-8 relative">
