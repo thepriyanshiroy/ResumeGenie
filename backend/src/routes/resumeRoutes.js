@@ -3,6 +3,7 @@ const express = require("express");
 const resumeController = require("../controllers/resumeController");
 const authMiddleware = require("../middlewares/authMiddleware");
 const upload = require('../middlewares/uploadMiddleware');
+const { validateResumeUpload } = require('../middlewares/securityMiddleware');
 const router = express.Router();
 
 // Protect all resume routes
@@ -10,6 +11,7 @@ router.use(authMiddleware.protect);
 router.post(
     '/upload',
     upload.single('resume'),
+    validateResumeUpload,
     resumeController.uploadResume
 );
 router

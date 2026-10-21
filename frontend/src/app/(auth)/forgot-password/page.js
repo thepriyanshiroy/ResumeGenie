@@ -11,7 +11,11 @@ import api from "@/lib/axios";
 import toast from "react-hot-toast";
 
 const forgotSchema = z.object({
-  email: z.string().email("Please enter a valid email"),
+  email: z
+    .string({ required_error: "Email is required" })
+    .trim()
+    .min(1, "Email is required")
+    .email("Please enter a valid email address (e.g. you@example.com)"),
 });
 
 export default function ForgotPassword() {
@@ -19,13 +23,16 @@ export default function ForgotPassword() {
   const [isSent, setIsSent] = useState(false);
   
   const { register, handleSubmit, formState: { errors } } = useForm({
-    resolver: zodResolver(forgotSchema)
+    resolver: zodResolver(forgotSchema),
+    mode: "onBlur"
   });
 
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
-      await api.post("/users/forgotPassword", data);
+      await api.post("/users/forgotPassword", {
+        email: data.email.trim().toLowerCase()
+      });
       setIsSent(true);
       toast.success("Password reset link sent to your email");
     } catch (error) {
@@ -43,17 +50,19 @@ export default function ForgotPassword() {
       </p>
 
       {!isSent ? (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">Email *</Label>
             <Input 
               id="email" 
               type="email" 
               placeholder="e.g. you@example.com" 
-              className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary h-12"
+              className={`bg-[#F8FAFC] h-12 ${
+                errors.email ? "border-red-500 focus-visible:ring-red-400" : "border-[#E2E8F0] focus-visible:ring-primary"
+              }`}
               {...register("email")} 
             />
-            {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+            {errors.email && <p className="text-xs sm:text-sm text-red-600">{errors.email.message}</p>}
           </div>
 
           <Button type="submit" variant="premium" className="w-full min-h-12 text-md mt-4 shadow-md" disabled={isLoading}>

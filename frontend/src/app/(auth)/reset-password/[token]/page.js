@@ -11,8 +11,13 @@ import api from "@/lib/axios";
 import toast from "react-hot-toast";
 
 const resetSchema = z.object({
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  passwordConfirm: z.string()
+  password: z
+    .string({ required_error: "Password is required" })
+    .min(8, "Password must be at least 8 characters")
+    .max(64, "Password must not exceed 64 characters"),
+  passwordConfirm: z
+    .string({ required_error: "Please confirm your password" })
+    .min(1, "Please confirm your password")
 }).refine((data) => data.password === data.passwordConfirm, {
   message: "Passwords do not match",
   path: ["passwordConfirm"],
@@ -27,7 +32,8 @@ export default function ResetPassword() {
   const [isSuccess, setIsSuccess] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm({
-    resolver: zodResolver(resetSchema)
+    resolver: zodResolver(resetSchema),
+    mode: "onBlur"
   });
 
   const onSubmit = async (data) => {
@@ -75,29 +81,33 @@ export default function ResetPassword() {
         Please enter your new password below.
       </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <div className="space-y-2">
-          <Label htmlFor="password">New Password</Label>
+          <Label htmlFor="password">New Password *</Label>
           <Input 
             id="password" 
             type="password" 
-            placeholder="••••••••" 
-            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary h-12"
+            placeholder="At least 8 characters" 
+            className={`bg-[#F8FAFC] h-12 ${
+              errors.password ? "border-red-500 focus-visible:ring-red-400" : "border-[#E2E8F0] focus-visible:ring-primary"
+            }`}
             {...register("password")} 
           />
-          {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+          {errors.password && <p className="text-xs sm:text-sm text-red-600">{errors.password.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="passwordConfirm">Confirm New Password</Label>
+          <Label htmlFor="passwordConfirm">Confirm New Password *</Label>
           <Input 
             id="passwordConfirm" 
             type="password" 
-            placeholder="••••••••" 
-            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary h-12"
+            placeholder="Re-enter password" 
+            className={`bg-[#F8FAFC] h-12 ${
+              errors.passwordConfirm ? "border-red-500 focus-visible:ring-red-400" : "border-[#E2E8F0] focus-visible:ring-primary"
+            }`}
             {...register("passwordConfirm")} 
           />
-          {errors.passwordConfirm && <p className="text-sm text-destructive">{errors.passwordConfirm.message}</p>}
+          {errors.passwordConfirm && <p className="text-xs sm:text-sm text-red-600">{errors.passwordConfirm.message}</p>}
         </div>
 
         <Button type="submit" variant="premium" className="w-full min-h-12 text-md mt-6 shadow-md" disabled={isLoading}>

@@ -1,20 +1,48 @@
-# Backend
-backend/node_modules/
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Environment variables & secrets (CRITICAL: NEVER COMMIT)
+*.env
+*.env.*
+*.env.local
+config.env
+*/config.env
 backend/config.env
-backend/.env
+frontend/.env.local
+frontend/.env*.local
 
-# Frontend
-frontend/node_modules/
-frontend/.env
+# Whitelist safe configuration examples
+!*.env.example
+!*/.env.example
+!*.example
+!backend/config.env.example
 
-# Logs
-*.log
-
-# Build files
-dist/
+# Next.js build output & cache
+.next/
+*/.next/
+out/
 build/
+dist/
+
+# Uploads & User Files (CRITICAL: DO NOT COMMIT USER RESUMES)
+backend/uploads/*
+!backend/uploads/.gitkeep
+uploads/*
+
+# Server Logs
+*.log
+backend/logs/*
+!backend/logs/.gitkeep
+logs/
+
+# Test coverage
 coverage/
 
-# OS files
+# OS / Editor files
 .DS_Store
 Thumbs.db
+.vscode/
+.idea/
+*.tsbuildinfo
+next-env.d.ts

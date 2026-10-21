@@ -12,10 +12,25 @@ import api from "@/lib/axios";
 import toast from "react-hot-toast";
 
 const signupSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  passwordConfirm: z.string()
+  name: z
+    .string({ required_error: "Full name is required" })
+    .trim()
+    .min(2, "Name must be at least 2 characters")
+    .max(60, "Name must not exceed 60 characters")
+    .regex(/^[a-zA-Z\s'-]+$/, "Name can only contain letters and spaces"),
+  email: z
+    .string({ required_error: "Email is required" })
+    .trim()
+    .min(1, "Email is required")
+    .email("Please enter a valid email address (e.g. you@example.com)")
+    .max(100, "Email must not exceed 100 characters"),
+  password: z
+    .string({ required_error: "Password is required" })
+    .min(8, "Password must be at least 8 characters")
+    .max(64, "Password must not exceed 64 characters"),
+  passwordConfirm: z
+    .string({ required_error: "Please confirm your password" })
+    .min(1, "Please confirm your password")
 }).refine((data) => data.password === data.passwordConfirm, {
   message: "Passwords do not match",
   path: ["passwordConfirm"],
@@ -25,13 +40,19 @@ export default function Signup() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { register, handleSubmit, formState: { errors } } = useForm({
-    resolver: zodResolver(signupSchema)
+    resolver: zodResolver(signupSchema),
+    mode: "onBlur"
   });
 
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
-      const response = await api.post("/users/signup", data);
+      const response = await api.post("/users/signup", {
+        name: data.name.trim(),
+        email: data.email.trim().toLowerCase(),
+        password: data.password,
+        passwordConfirm: data.passwordConfirm
+      });
       localStorage.setItem("token", response.data.token);
       toast.success("Account created successfully!");
       router.push("/dashboard");
@@ -47,53 +68,61 @@ export default function Signup() {
       <h2 className="text-xl sm:text-3xl font-display font-bold text-center text-foreground mb-1 sm:mb-2">Create an Account</h2>
       <p className="text-center text-sm sm:text-base text-[#64748B] mb-2 sm:mb-8">Join ResumeGenie and land more offers</p>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 sm:space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 sm:space-y-4" noValidate>
         <div className="space-y-1 sm:space-y-2">
-          <Label htmlFor="name">Full Name</Label>
+          <Label htmlFor="name">Full Name *</Label>
           <Input 
             id="name" 
             type="text" 
             placeholder="e.g. John Doe" 
-            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary !min-h-10 !h-10 sm:!min-h-12 sm:!h-12"
+            className={`bg-[#F8FAFC] !min-h-10 !h-10 sm:!min-h-12 sm:!h-12 ${
+              errors.name ? "border-red-500 focus-visible:ring-red-400" : "border-[#E2E8F0] focus-visible:ring-primary"
+            }`}
             {...register("name")} 
           />
-          {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+          {errors.name && <p className="text-xs sm:text-sm text-red-600">{errors.name.message}</p>}
         </div>
 
         <div className="space-y-1 sm:space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">Email *</Label>
           <Input 
             id="email" 
             type="email" 
             placeholder="e.g. you@example.com" 
-            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary !min-h-10 !h-10 sm:!min-h-12 sm:!h-12"
+            className={`bg-[#F8FAFC] !min-h-10 !h-10 sm:!min-h-12 sm:!h-12 ${
+              errors.email ? "border-red-500 focus-visible:ring-red-400" : "border-[#E2E8F0] focus-visible:ring-primary"
+            }`}
             {...register("email")} 
           />
-          {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+          {errors.email && <p className="text-xs sm:text-sm text-red-600">{errors.email.message}</p>}
         </div>
 
         <div className="space-y-1 sm:space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">Password *</Label>
           <Input 
             id="password" 
             type="password" 
-            placeholder="••••••••" 
-            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary !min-h-10 !h-10 sm:!min-h-12 sm:!h-12"
+            placeholder="At least 8 characters" 
+            className={`bg-[#F8FAFC] !min-h-10 !h-10 sm:!min-h-12 sm:!h-12 ${
+              errors.password ? "border-red-500 focus-visible:ring-red-400" : "border-[#E2E8F0] focus-visible:ring-primary"
+            }`}
             {...register("password")} 
           />
-          {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+          {errors.password && <p className="text-xs sm:text-sm text-red-600">{errors.password.message}</p>}
         </div>
 
         <div className="space-y-1 sm:space-y-2">
-          <Label htmlFor="passwordConfirm">Confirm Password</Label>
+          <Label htmlFor="passwordConfirm">Confirm Password *</Label>
           <Input 
             id="passwordConfirm" 
             type="password" 
-            placeholder="••••••••" 
-            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary !min-h-10 !h-10 sm:!min-h-12 sm:!h-12"
+            placeholder="Re-enter password" 
+            className={`bg-[#F8FAFC] !min-h-10 !h-10 sm:!min-h-12 sm:!h-12 ${
+              errors.passwordConfirm ? "border-red-500 focus-visible:ring-red-400" : "border-[#E2E8F0] focus-visible:ring-primary"
+            }`}
             {...register("passwordConfirm")} 
           />
-          {errors.passwordConfirm && <p className="text-sm text-destructive">{errors.passwordConfirm.message}</p>}
+          {errors.passwordConfirm && <p className="text-xs sm:text-sm text-red-600">{errors.passwordConfirm.message}</p>}
         </div>
 
         <Button type="submit" variant="premium" className="w-full !min-h-10 sm:!min-h-12 text-md mt-2 sm:mt-6 shadow-md" disabled={isLoading}>

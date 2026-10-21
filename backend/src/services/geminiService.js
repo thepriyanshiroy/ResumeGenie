@@ -14,18 +14,27 @@ exports.analyzeResume = async (
 ) => {
   const prompt = generateResumePrompt(resumeText, companyName, jobTitle, jobDescription);
 
+  const candidateModels = [
+    "gemini-flash-lite-latest",
+    "gemini-3.5-flash",
+    "gemini-3.5-flash-lite",
+    "gemini-3.8-flash"
+  ];
+
   let response;
-  let retries = 4;
-  let delay = 2000;
-  
-  while (retries > 0) {
-    try {
-      response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-    contents: prompt,
-    config: {
-      responseMimeType: "application/json",
-      responseSchema: {
+  let lastError;
+
+  for (const model of candidateModels) {
+    let retries = 2;
+    let delay = 1000;
+    while (retries > 0) {
+      try {
+        response = await ai.models.generateContent({
+          model,
+          contents: prompt,
+          config: {
+            responseMimeType: "application/json",
+            responseSchema: {
         type: Type.OBJECT,
         required: [
           "resumeSections",
@@ -191,14 +200,26 @@ exports.analyzeResume = async (
       }
     }
   });
-      break;
-    } catch (error) {
-      retries--;
-      if (retries === 0 || error.status !== 503) throw error;
-      console.warn(`Gemini API 503 error. Retrying in ${delay}ms...`);
-      await new Promise(res => setTimeout(res, delay));
-      delay *= 2;
+        break;
+      } catch (error) {
+        lastError = error;
+        retries--;
+        if (error.status === 404) {
+          // Model not found or deprecated, skip to next candidate model immediately
+          break;
+        }
+        if (retries > 0) {
+          console.warn(`Gemini API error (${error.status || error.message}) with model ${model}. Retrying in ${delay}ms...`);
+          await new Promise(res => setTimeout(res, delay));
+          delay *= 2;
+        }
+      }
     }
+    if (response) break;
+  }
+
+  if (!response) {
+    throw new AppError(lastError?.message || "Failed to analyze resume with AI", 500);
   }
 
   const analysisText = response.text;

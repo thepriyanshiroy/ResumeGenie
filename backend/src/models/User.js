@@ -38,9 +38,15 @@ const userSchema = new mongoose.Schema(
 
     passwordChangedAt: Date,
 
-    passwordResetToken: String,
+    passwordResetToken: {
+      type: String,
+      select: false,
+    },
 
-    passwordResetExpires: Date,
+    passwordResetExpires: {
+      type: Date,
+      select: false,
+    },
 
     active: {
       type: Boolean,
@@ -50,6 +56,24 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: {
+      transform: function (doc, ret) {
+        delete ret.password;
+        delete ret.passwordResetToken;
+        delete ret.passwordResetExpires;
+        delete ret.__v;
+        return ret;
+      }
+    },
+    toObject: {
+      transform: function (doc, ret) {
+        delete ret.password;
+        delete ret.passwordResetToken;
+        delete ret.passwordResetExpires;
+        delete ret.__v;
+        return ret;
+      }
+    }
   }
 );
 userSchema.pre('save', async function () {
@@ -74,7 +98,6 @@ userSchema.methods.correctPassword = async function (candidatePassword, userPass
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
     if (this.passwordChangedAt) {
         const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
-        console.log(changedTimestamp, JWTTimestamp);
         return JWTTimestamp < changedTimestamp;
     }
     return false;
@@ -84,7 +107,6 @@ userSchema.methods.createPasswordResetToken = function () {
     const resetToken = crypto.randomBytes(32).toString('hex');
     //2) hash token
     this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-    console.log({ resetToken }, this.passwordResetToken);
     this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
     return resetToken;
 }

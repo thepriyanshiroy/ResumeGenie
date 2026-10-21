@@ -12,21 +12,32 @@ import api from "@/lib/axios";
 import toast from "react-hot-toast";
 
 const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  email: z
+    .string({ required_error: "Email is required" })
+    .trim()
+    .min(1, "Email is required")
+    .email("Please enter a valid email address (e.g. you@example.com)"),
+  password: z
+    .string({ required_error: "Password is required" })
+    .min(1, "Password is required")
+    .min(8, "Password must be at least 8 characters"),
 });
 
 export default function Login() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { register, handleSubmit, formState: { errors } } = useForm({
-    resolver: zodResolver(loginSchema)
+    resolver: zodResolver(loginSchema),
+    mode: "onBlur"
   });
 
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
-      const response = await api.post("/users/login", data);
+      const response = await api.post("/users/login", {
+        email: data.email.trim().toLowerCase(),
+        password: data.password
+      });
       localStorage.setItem("token", response.data.token);
       toast.success("Welcome back!");
       router.push("/dashboard");
@@ -42,22 +53,24 @@ export default function Login() {
       <h2 className="text-xl sm:text-3xl font-display font-bold text-center text-foreground mb-1 sm:mb-2">Welcome Back</h2>
       <p className="text-center text-sm sm:text-base text-[#64748B] mb-4 sm:mb-8">Sign in to your account to continue</p>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-5" noValidate>
         <div className="space-y-1.5 sm:space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">Email *</Label>
           <Input 
             id="email" 
             type="email" 
             placeholder="e.g. you@example.com" 
-            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary h-10 sm:h-12"
+            className={`bg-[#F8FAFC] h-10 sm:h-12 ${
+              errors.email ? "border-red-500 focus-visible:ring-red-400" : "border-[#E2E8F0] focus-visible:ring-primary"
+            }`}
             {...register("email")} 
           />
-          {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+          {errors.email && <p className="text-xs sm:text-sm text-red-600">{errors.email.message}</p>}
         </div>
 
         <div className="space-y-1.5 sm:space-y-2">
           <div className="flex justify-between items-center">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">Password *</Label>
             <Link href="/forgot-password" className="text-sm text-primary hover:underline">
               Forgot password?
             </Link>
@@ -66,10 +79,12 @@ export default function Login() {
             id="password" 
             type="password" 
             placeholder="••••••••" 
-            className="bg-[#F8FAFC] border-[#E2E8F0] focus-visible:ring-primary h-10 sm:h-12"
+            className={`bg-[#F8FAFC] h-10 sm:h-12 ${
+              errors.password ? "border-red-500 focus-visible:ring-red-400" : "border-[#E2E8F0] focus-visible:ring-primary"
+            }`}
             {...register("password")} 
           />
-          {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+          {errors.password && <p className="text-xs sm:text-sm text-red-600">{errors.password.message}</p>}
         </div>
 
         <Button type="submit" variant="premium" className="w-full min-h-10 sm:min-h-12 text-md mt-2 sm:mt-4 shadow-md" disabled={isLoading}>

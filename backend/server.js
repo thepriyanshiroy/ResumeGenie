@@ -15,6 +15,7 @@ const logger = require("./src/utils/logger");
 
 const AppError = require("./src/utils/appError");
 const globalErrorHandler = require("./src/controllers/errorController");
+const { preventInjection, preventSecretLeakage } = require("./src/middlewares/securityMiddleware");
 const authRoutes = require("./src/routes/authRoutes");
 const resumeRouter = require("./src/routes/resumeRoutes");
 
@@ -30,11 +31,42 @@ connectDB();
 
 const app = express();
 
-// Trust proxy for Render (required for express-rate-limit)
+// Disable X-Powered-By header to hide server framework
+app.disable('x-powered-by');
+
+// Trust proxy for Render / Cloud deployments (required for rate-limiting and secure cookies)
 app.set('trust proxy', 1);
 
-// Set security HTTP headers
-app.use(helmet());
+// Comprehensive Helmet Security Headers
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }, // Allows static PDF uploads to be fetched by frontend
+  crossOriginOpenerPolicy: { policy: "same-origin" },
+  referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  }
+}));
+
+// Custom security headers and anti-caching for API responses
+app.use((req, res, next) => {
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  
+  // Prevent caching of sensitive API data in client/proxy caches
+  if (req.originalUrl && req.originalUrl.startsWith('/api')) {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+  }
+  next();
+});
+
+// Response interceptor: automatically strip and redact any credentials/API keys from JSON responses
+app.use(preventSecretLeakage);
 
 // Implement strict CORS
 app.use(cors({
@@ -68,6 +100,9 @@ app.use((req, res, next) => {
   });
   next();
 });
+
+// Prevent SQL and NoSQL Injection attacks on parameters, queries, and bodies
+app.use(preventInjection);
 
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitize());

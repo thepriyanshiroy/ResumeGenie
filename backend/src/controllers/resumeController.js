@@ -118,7 +118,10 @@ exports.deleteResume = catchAsync(async (req, res, next) => {
 });
 exports.analyzeResume = catchAsync(async (req, res, next) => {
 
-    const resume = await Resume.findById(req.params.id);
+    const resume = await Resume.findOne({
+        _id: req.params.id,
+        user: req.user.id
+    });
 
     if (!resume) {
         return next(new AppError("Resume not found", 404));
